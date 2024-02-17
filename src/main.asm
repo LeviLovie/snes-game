@@ -11,8 +11,17 @@
 VRAM_CHARS = $0000
 VRAM_BG1   = $1000
 
+PLAYER_X = $0000
+PLAYER_Y = $0002
+
 start:
 	.include "init.asm"
+
+	setA16
+	lda #$001
+	sta PLAYER_X
+	sta PLAYER_Y
+	setA8
 
 	; Set up the color palette
 	stz CGADD
@@ -73,10 +82,25 @@ start:
 	cpx #32*32
 	bne @clear_loop
 
+@draw_player:
 	; Write a tile to position (1, 1)
-	TILE_X = 1
-	TILE_Y = 1
-	ldx #(VRAM_BG1 + (TILE_Y * 32) + TILE_X)
+	; (VRAM_BG1 + (PLAYER_Y * 32) + PLAYER_X)
+	ldy #$00
+	setA16
+	lda #$0000
+	lda PLAYER_Y
+	; Multiply Y by 32
+	asl
+	asl
+	asl
+	asl
+	asl
+	adc #VRAM_BG1
+	adc PLAYER_X
+	tax
+	lda #$0000
+	setA8
+	; ldx #(VRAM_BG1 + (2 * 32) + 2)
 	stx VMADDL
 	lda #$01 ; tile number
 	sta VMDATAL
@@ -89,8 +113,14 @@ start:
 	lda #$0f
 	sta INIDISP
 
-busywait:
-	bra busywait
+mainloop:
+	lda JOY1H
+	bit #%00000100 ; Down button
+	beq @down_not_pressed
+	inc PLAYER_Y
+	@down_not_pressed:
+
+	bra mainloop
 
 nmi:
 	bit RDNMI

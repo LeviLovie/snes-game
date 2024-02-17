@@ -36,4 +36,22 @@ charset:
         .byte   %11111111 ; row 7, color 0
         .byte   %00000000 ; row 7, color 1
 
+	; tile 0x02
+        .byte   %00000000
+        .byte   %00000000
+        .byte   %00000000
+        .byte   %00100000
+        .byte   %00000000
+        .byte   %00100000
+        .byte   %00000000
+        .byte   %00100000
+        .byte   %00000000
+        .byte   %00100000
+        .byte   %00000000
+        .byte   %00100000
+        .byte   %00000000
+        .byte   %00000000
+        .byte   %00000000
+        .byte   %00000000
+
 charset_end:
