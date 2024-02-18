@@ -71,19 +71,7 @@ start:
 	cpx #(charset_end - charset)
 	bne @charset_loop
 
-	; Clear the tile map
-	ldx #VRAM_BG1
-	stx VMADDL
-	ldx #0
-@clear_loop:
-	sta VMDATAL
-	stz VMDATAH
-	inx
-	cpx #32*32
-	bne @clear_loop
-
-	lda #%00000001
-	sta NMITIMEN
+	jsl clear_tilemap
 
 
 mainloop:
@@ -130,10 +118,10 @@ draw_player:
 
 	rts
 
-
 nmi:
 	bit RDNMI
 _rti:
 	rti
 
+.include "graphics.asm"
 .include "charset.asm"
