@@ -82,7 +82,20 @@ start:
 	cpx #32*32
 	bne @clear_loop
 
-@draw_player:
+	lda #%00000001
+	sta NMITIMEN
+
+
+mainloop:
+	lda JOY1H
+	bit #%00000100 ; Down button
+	beq @down_not_pressed
+		jmp draw_player
+	@down_not_pressed:
+
+	bra mainloop
+
+draw_player:
 	; Write a tile to position (1, 1)
 	; (VRAM_BG1 + (PLAYER_Y * 32) + PLAYER_X)
 	ldy #$00
@@ -100,7 +113,6 @@ start:
 	tax
 	lda #$0000
 	setA8
-	; ldx #(VRAM_BG1 + (2 * 32) + 2)
 	stx VMADDL
 	lda #$01 ; tile number
 	sta VMDATAL
@@ -110,17 +122,14 @@ start:
 	lda #%00000001
 	sta TM
 
+	lda #%00000001
+	sta NMITIMEN
+
 	lda #$0f
 	sta INIDISP
 
-mainloop:
-	lda JOY1H
-	bit #%00000100 ; Down button
-	beq @down_not_pressed
-	inc PLAYER_Y
-	@down_not_pressed:
+	rts
 
-	bra mainloop
 
 nmi:
 	bit RDNMI
